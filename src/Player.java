@@ -228,21 +228,7 @@ class Player {
                 double archerRatio = archers * 1.0 / UNIT_RATIO.get(UnitType.ARCHER);
                 double knightRatio = knights * 1.0 / UNIT_RATIO.get(UnitType.KNIGHT);
                 double giantRatio = giants * 1.0 / UNIT_RATIO.get(UnitType.GIANT);
-                if (archerRatio < knightRatio && archerRatio < giantRatio) {
-                    System.err.println("Try to order archer");
-                    List<Structure> archerQueue = notWorking.stream()
-                                                            .filter(b -> b.unitType == UnitType.ARCHER)
-                                                            .sorted(comparator)
-                                                            .collect(Collectors.toList());
-                    if (archerQueue.size() > 0 && gold >= 100) {
-                        Structure nearestToMe = archerQueue.get(0);
-                        trainBarracks.add(" " + nearestToMe.siteId);
-                        gold -= 100;
-                        System.err.printf("Request %s for 100 gold from %d", nearestToMe.unitType, nearestToMe.siteId);
-                    } else {
-                        System.err.println("Not enough gold");
-                    }
-                } else if (knightRatio <= archerRatio && knightRatio <= giantRatio) {
+                if (knightRatio <= archerRatio && knightRatio <= giantRatio) {
                     System.err.println("Try to order knights");
                     List<Structure> knightsQueue = notWorking.stream()
                                                              .filter(b -> b.unitType == UnitType.KNIGHT)
@@ -256,12 +242,26 @@ class Player {
                     } else {
                         System.err.println("Not enough gold");
                     }
+                } else if (archerRatio <= knightRatio && archerRatio <= giantRatio) {
+                    System.err.println("Try to order archer");
+                    List<Structure> archerQueue = notWorking.stream()
+                                                            .filter(b -> b.unitType == UnitType.ARCHER)
+                                                            .sorted(comparator)
+                                                            .collect(Collectors.toList());
+                    if (archerQueue.size() > 0 && gold >= 100) {
+                        Structure nearestToMe = archerQueue.get(0);
+                        trainBarracks.add(" " + nearestToMe.siteId);
+                        gold -= 100;
+                        System.err.printf("Request %s for 100 gold from %d", nearestToMe.unitType, nearestToMe.siteId);
+                    } else {
+                        System.err.println("Not enough gold");
+                    }
                 } else {
                     System.err.println("Try to order giants");
                     List<Structure> giantsQueue = notWorking.stream()
-                                                             .filter(b -> b.unitType == UnitType.GIANT)
-                                                             .sorted(comparator)
-                                                             .collect(Collectors.toList());
+                                                            .filter(b -> b.unitType == UnitType.GIANT)
+                                                            .sorted(comparator)
+                                                            .collect(Collectors.toList());
                     if (giantsQueue.size() > 0 && gold >= 140) {
                         Structure nearestToEnemy = giantsQueue.get(0);
                         trainBarracks.add(" " + nearestToEnemy.siteId);
@@ -288,7 +288,7 @@ class Player {
         if (archerBarracks + knightBarracks + giantBarracks < STRUCTURE_LIMIT.get(StructureType.BARRACKS)) {
             if (towers < STRUCTURE_LIMIT.get(StructureType.TOWER)) {
                 if ((archerBarracks + knightBarracks + giantBarracks) * 1.0 / STRUCTURE_LIMIT.get(StructureType.BARRACKS)
-                    <= towers * 1.0 / STRUCTURE_LIMIT.get(StructureType.TOWER)) {
+                        <= towers * 1.0 / STRUCTURE_LIMIT.get(StructureType.TOWER)) {
                     double archers = archerBarracks * 1.0 / BARRACKS_RATIO.get(UnitType.ARCHER);
                     double knights = knightBarracks * 1.0 / BARRACKS_RATIO.get(UnitType.KNIGHT);
                     double giants = giantBarracks * 1.0 / BARRACKS_RATIO.get(UnitType.GIANT);
